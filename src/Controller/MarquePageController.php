@@ -95,6 +95,20 @@ class MarquePageController extends Controller
      */
     public function modify(Request $rq, $id)
     {
+        $em = $this->getDoctrine()->getManager();
+        $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
+        $mp = $mpReposit->find($id);
+
+        $form = $this->createForm(MarquePageType::class, $mp);
+        $form->handleRequest($rq);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $mp = $form->getData();
+            $mp->setDateCreate(new \DateTime());
+            $em->persist($mp);
+            $em->flush();
+            return $this->redirectToRoute('show_marquesPages');
+        }
+        return $this->render('newMarquePage.html.twig', ['id' => $id, 'form' => $form->createView()]);
 
     }
 }
