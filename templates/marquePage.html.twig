@@ -22,10 +22,10 @@
                 <p>
                     {{ mp.commentaire }}
                     {% if (is_granted('MARQUE_PAGE_EDIT', mp)) %}
-                        <a href="{{ path('modify_quotes', {'id': mp.id}) }} ">Modifier</a>
+                        <a href="{{ path('edit_marquePage', {'id': mp.id}) }} ">Modifier</a>
                     {% endif %}
                     {% if (is_granted('MARQUE_PAGE_DELETE', mp)) %}
-                        <a href="{{ path('delete_quotes', {'id': mp.id}) }}">Supprimer</a>
+                        <a href="{{ path('delete_marquePage', {'id': mp.id}) }}">Supprimer</a>
                     {% endif %}
                 </p>
             </li>

@@ -20,7 +20,14 @@ class MarquePageController extends Controller
         $mp = new MarquePage();
         $em = $this->getDoctrine()->getManager();
         $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
-        $mps = $mpReposit->findAll();
+        $user = $this->getUser();
+        //$mps = $mpReposit->findAll();
+        $query = $mpReposit->createQueryBuilder('mp')
+            ->where('mp.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('mp.titre', 'ASC')
+            ->getQuery();
+        $mps = $query->getResult();
 
         return $this->render('marquePage.html.twig',
             ['marquesPages' => $mps]);
