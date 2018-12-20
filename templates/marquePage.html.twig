@@ -1,0 +1,41 @@
+{% extends "base.html.twig" %}
+{% block title %}Marques Pages{% endblock %}
+{%block body %}
+    {% if (is_granted('IS_AUTHENTICATED_FULLY')) %}
+        <a href="{{ path('app_logout') }} ">se déconnecter</a>
+        <p>user:
+            {{ app.user.username }}</p>
+    {% else %}
+        <a href="/login ">se connecter</a>
+
+    {% endif %}
+
+    <h1>Marques Pages</h1>
+    {% if (formAdd is defined) and (is_granted('IS_AUTHENTICATED_FULLY')) %}
+        {{ include("new.html.twig") }}
+    {% endif %}
+
+    <ul>
+        {% for mp in marquesPages %}
+            <li>
+                {{ mp.titre }}<br/>
+                <p>
+                    {{ mp.commentaire }}
+                    {% if (is_granted('MARQUE_PAGE_EDIT', mp)) %}
+                        <a href="{{ path('modify_quotes', {'id': mp.id}) }} ">Modifier</a>
+                    {% endif %}
+                    {% if (is_granted('MARQUE_PAGE_DELETE', mp)) %}
+                        <a href="{{ path('delete_quotes', {'id': mp.id}) }}">Supprimer</a>
+                    {% endif %}
+                </p>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+{% block stylesheets %}
+    <style>
+        h1 {
+            text-align: center;
+        }
+    </style>
+{% endblock %}

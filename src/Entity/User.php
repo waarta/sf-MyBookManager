@@ -2,14 +2,13 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -19,82 +18,91 @@ class User
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $nameUser;
+    private $username;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="json")
      */
-    private $passwordUser;
+    private $roles = [];
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MarquePage", mappedBy="user", orphanRemoval=true)
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
-    private $marquePages;
-
-    public function __construct()
-    {
-        $this->marquePages = new ArrayCollection();
-    }
+    private $password;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getNameUser(): ?string
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
     {
-        return $this->nameUser;
+        return (string) $this->username;
     }
 
-    public function setNameUser(string $nameUser): self
+    public function setUsername(string $username): self
     {
-        $this->nameUser = $nameUser;
-
-        return $this;
-    }
-
-    public function getPasswordUser(): ?string
-    {
-        return $this->passwordUser;
-    }
-
-    public function setPasswordUser(string $passwordUser): self
-    {
-        $this->passwordUser = $passwordUser;
+        $this->username = $username;
 
         return $this;
     }
 
     /**
-     * @return Collection|MarquePage[]
+     * @see UserInterface
      */
-    public function getMarquePages(): Collection
+    public function getRoles(): array
     {
-        return $this->marquePages;
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function addMarquePage(MarquePage $marquePage): self
+    public function setRoles(array $roles): self
     {
-        if (!$this->marquePages->contains($marquePage)) {
-            $this->marquePages[] = $marquePage;
-            $marquePage->setUser($this);
-        }
+        $this->roles = $roles;
 
         return $this;
     }
 
-    public function removeMarquePage(MarquePage $marquePage): self
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
     {
-        if ($this->marquePages->contains($marquePage)) {
-            $this->marquePages->removeElement($marquePage);
-            // set the owning side to null (unless already changed)
-            if ($marquePage->getUser() === $this) {
-                $marquePage->setUser(null);
-            }
-        }
+        return (string) $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
     }
 }
