@@ -27,6 +27,9 @@
                 ({{mp.dateCreate.format('Y-m-d H:i:s')}})<br/>
                 <p>
                     {{mp.URL}}
+                    {% if (is_granted('IS_AUTHENTICATED_FULLY')) %}
+                        <a href="{{ path('show_marquePage', {'id': mp.id}) }} ">Voir</a>
+                    {% endif %}
                     {% if (is_granted('MARQUE_PAGE_EDIT', mp)) %}
                         <a href="{{ path('edit_marquePage', {'id': mp.id}) }} ">Modifier</a>
                     {% endif %}

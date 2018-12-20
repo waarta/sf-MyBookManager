@@ -98,7 +98,6 @@ class MarquePageController extends Controller
         $em = $this->getDoctrine()->getManager();
         $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
         $mp = $mpReposit->find($id);
-
         $form = $this->createForm(MarquePageType::class, $mp);
         $form->handleRequest($rq);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -110,5 +109,16 @@ class MarquePageController extends Controller
         }
         return $this->render('newMarquePage.html.twig', ['id' => $id, 'form' => $form->createView()]);
 
+    }
+
+    /**
+     * @Route("/show/{id}", name="show_marquePage")
+     * @IsGranted("ROLE_USER")
+     */
+    public function show($id)
+    {
+        $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
+        $mp = $mpReposit->find($id);
+        return $this->render('showMarquePage.html.twig', ['mp' => $mp]);
     }
 }
