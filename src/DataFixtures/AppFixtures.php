@@ -54,6 +54,21 @@ class AppFixtures extends Fixture
         $mp1->setUser($user2);
         $manager->persist($mp1);
 
+        $mp2 = new MarquePage();
+        $mp2->setTitre("zaerty");
+        $mp2->setURL("https://nclshart.net/wimsi/symfony/#/3/23");
+        $mp2->setDateCreate(new \DateTime());
+        $mp2->setUser($user2);
+        $manager->persist($mp2);
+
+        $mp2 = new MarquePage();
+        $mp2->setTitre("coucou");
+        $mp2->setURL("https://nclshart.net/wimsi/symfony/#/3/23");
+        $mp2->setCommentaire("qergdgquzrheghguvclnqztequ");
+        $mp2->setDateCreate(new \DateTime());
+        $mp2->setUser($user2);
+        $manager->persist($mp2);
+
         $manager->flush();
     }
 
