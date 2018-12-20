@@ -11,8 +11,8 @@
     {% endif %}
 
     <h1>Marques Pages</h1>
-    {% if (formAdd is defined) and (is_granted('IS_AUTHENTICATED_FULLY')) %}
-        {{ include("new.html.twig") }}
+    {% if (is_granted('IS_AUTHENTICATED_FULLY')) %}
+        <a href="{{ path('new_marquePage') }} ">New</a>
     {% endif %}
 
     <form name="f" method="get">

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\MarquePage;
+use App\Form\MarquePageType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class MarquePageController extends Controller
             $query = $mpReposit->createQueryBuilder('mp')
                 ->where('mp.user = :user')
                 ->setParameter('user', $user)
-                ->orderBy('mp.dateCreate', 'ASC')
+                ->orderBy('mp.dateCreate', 'DESC')
                 ->getQuery();
             $mps = $query->getResult();
             return $this->render('marquePage.html.twig',
@@ -50,6 +51,28 @@ class MarquePageController extends Controller
         $mps = $query->getResult();
         return $this->render('marquePage.html.twig',
             ['marquesPages' => $mps]);
+    }
+
+    /**
+     * @Route("/new/", name="new_marquePage")
+     * @IsGranted("ROLE_USER")
+     */
+    function new (Request $request) {
+        $mp = new MarquePage();
+        $form = $this->createForm(MarquePageType::class, $mp);
+        $form->handleRequest($request);
+        $em = $this->getDoctrine()->getManager();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+            $mp = $form->getData();
+            $mp->setUser($this->getUser());
+            $mp->setDateCreate(new \DateTime());
+            $em->persist($mp);
+            $em->flush();
+            return $this->redirectToRoute('show_marquesPages');
+        }
+        return $this->render('newMarquePage.html.twig',
+            ['form' => $form->createView()]);
     }
 
     /**
