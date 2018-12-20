@@ -15,12 +15,18 @@
         {{ include("new.html.twig") }}
     {% endif %}
 
+    <form name="f" method="get">
+        <input name="search" id="search" type="text"/>
+        <input type="submit" value="search"/>
+    </form>
+
     <ul>
         {% for mp in marquesPages %}
             <li>
-                {{ mp.titre }}<br/>
+                {{ mp.titre }}
+                ({{mp.dateCreate.format('Y-m-d H:i:s')}})<br/>
                 <p>
-                    {{ mp.commentaire }}
+                    {{mp.URL}}
                     {% if (is_granted('MARQUE_PAGE_EDIT', mp)) %}
                         <a href="{{ path('edit_marquePage', {'id': mp.id}) }} ">Modifier</a>
                     {% endif %}

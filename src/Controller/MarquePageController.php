@@ -21,14 +21,33 @@ class MarquePageController extends Controller
         $em = $this->getDoctrine()->getManager();
         $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
         $user = $this->getUser();
-        //$mps = $mpReposit->findAll();
+        $search = $rq->query->get('search');
+        if ($search != "") {
+            return $this->search($search);
+        } else {
+            $query = $mpReposit->createQueryBuilder('mp')
+                ->where('mp.user = :user')
+                ->setParameter('user', $user)
+                ->orderBy('mp.dateCreate', 'ASC')
+                ->getQuery();
+            $mps = $query->getResult();
+            return $this->render('marquePage.html.twig',
+                ['marquesPages' => $mps]);
+        }
+
+    }
+
+    public function search($search)
+    {
+        $mpReposit = $this->getDoctrine()->getRepository(MarquePage::class);
         $query = $mpReposit->createQueryBuilder('mp')
-            ->where('mp.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('mp.titre', 'ASC')
+            ->where('mp.titre like :search')
+            ->orWhere('mp.URL like :search')
+            ->orWhere('mp.commentaire like :search')
+            ->setParameter('search', '%' . $search . '%')
+            ->orderBy('mp.dateCreate', 'ASC')
             ->getQuery();
         $mps = $query->getResult();
-
         return $this->render('marquePage.html.twig',
             ['marquesPages' => $mps]);
     }
